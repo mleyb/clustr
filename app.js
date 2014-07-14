@@ -1,4 +1,4 @@
-const cluster = require('cluster');
+const cluster = require('cluster'), util = require('./util');
 
 if (cluster.isMaster) {
 
@@ -6,10 +6,18 @@ if (cluster.isMaster) {
 		console.log('Worker ' + worker.process.pid + ' is online');
 	});
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 5; i++) {
 		cluster.fork();
 	}
 }
 else {
-	console.log('Do something!');
+
+	var action = function () {
+		console.log('Worker ' + process.pid + ' executing');	
+		setTimeout(action, (util.random(1, 10) * 1000));
+	}
+
+	// kick things off
+	action();
 }
+
